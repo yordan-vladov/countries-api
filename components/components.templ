@@ -1,0 +1,44 @@
+package components
+import . "yvladov.com/countries-api/models"
+
+templ headerComponent(){
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="styles/style.css" />
+        <title>Countries</title>
+    </head>
+}
+
+templ contentComponent(body templ.Component){
+    <body>
+        <div class="content">
+            @body
+        </div>
+    </body>
+}
+
+templ Hello(name string) {
+    <h1>Hello, { name }</h1>
+}
+
+templ ContentPage(body templ.Component) {
+    <html>
+        @headerComponent()
+        @contentComponent(body)
+    </html>
+}
+
+templ CountryComponent(c Country) {
+    <div class="country">
+        {c.Name}
+    </div>
+}
+
+templ CountriesListComponent(c []Country) {
+    <div class="countries">
+        for _, country := range c {
+            @CountryComponent(country)
+        }
+    </div>
+}

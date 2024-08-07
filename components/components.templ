@@ -1,6 +1,8 @@
 package components
-import . "yvladov.com/countries-api/models"
-
+import (
+        "strconv"
+        . "yvladov.com/countries-api/models"
+        )
 templ headerComponent(){
     <head>
         <meta charset="UTF-8" />
@@ -13,6 +15,7 @@ templ headerComponent(){
 templ contentComponent(body templ.Component){
     <body>
         <div class="content">
+            @topBarComponent()
             @body
         </div>
     </body>
@@ -29,9 +32,25 @@ templ ContentPage(body templ.Component) {
     </html>
 }
 
+templ topBarComponent() {
+    <div class="top-bar">
+        <h1>Where in the world?</h1>
+        <div class="app-mode">
+            <img src="images/icon-moon.svg" alt="moon">
+            <h1>Dark Mode</h1>
+        </div>
+    </div>
+}
+
 templ CountryComponent(c Country) {
     <div class="country">
-        {c.Name}
+        <img src="{c.Flags.Png}" alt="flag">
+        <div class="country-details">
+            <h1>{c.Name}</h1>
+            <p><b>Population:</b> { strconv.Itoa(c.Population) }  </p>
+            <p><b>Region:</b> {c.Region} </p>
+            <p><b>Capital:</b> {c.Capital} </p>
+        </div>
     </div>
 }
 

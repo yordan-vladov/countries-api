@@ -44,9 +44,10 @@ func main() {
 		return
 	}
 	e.GET("/", func(c echo.Context) error {
-		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries)))
+		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[:10])))
 	})
 	e.Static("/styles", "public/styles")
+	e.Static("/images", "public/images")
 	e.Logger.Fatal(e.Start(":1323"))
 }
 

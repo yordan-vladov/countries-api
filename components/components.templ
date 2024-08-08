@@ -1,6 +1,6 @@
 package components
 import (
-        "strconv"
+        "github.com/dustin/go-humanize"
         . "yvladov.com/countries-api/models"
         )
 templ headerComponent(){
@@ -12,6 +12,24 @@ templ headerComponent(){
     </head>
 }
 
+templ countryFilterComponent(){
+    <div class="country-filters">
+        <div class="search-filter">
+            <img src="/images/magnifying-glass.svg" alt="search-icon">
+            <input type="text" placeholder="Search for a country" />
+        </div>
+        <div class="region-filter">
+            <select>
+            <option hidden disabled selected value>Filter by Region</option>
+            <option>Africa</option>
+            <option>America</option>
+            <option>Asia</option>
+            <option>Europe</option>
+            <option>Oceania</option>
+            </select>
+        </div>
+    </div>
+}
 templ contentComponent(body templ.Component){
     <body>
         <div class="content">
@@ -44,10 +62,10 @@ templ topBarComponent() {
 
 templ CountryComponent(c Country) {
     <div class="country">
-        <img src="{c.Flags.Png}" alt="flag">
+        <img src={c.Flags.Png} alt="flag">
         <div class="country-details">
             <h1>{c.Name}</h1>
-            <p><b>Population:</b> { strconv.Itoa(c.Population) }  </p>
+            <p><b>Population:</b> { humanize.Comma(int64(c.Population)) }  </p>
             <p><b>Region:</b> {c.Region} </p>
             <p><b>Capital:</b> {c.Capital} </p>
         </div>
@@ -55,9 +73,12 @@ templ CountryComponent(c Country) {
 }
 
 templ CountriesListComponent(c []Country) {
-    <div class="countries">
-        for _, country := range c {
-            @CountryComponent(country)
-        }
+    <div class="page-body">
+        @countryFilterComponent()
+        <div class="countries">
+            for _, country := range c {
+                @CountryComponent(country)
+            }
+        </div>
     </div>
 }

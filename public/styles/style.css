@@ -1,2 +1,143 @@
+@import url(https://fonts.google.com/specimen/Nunito+Sans);
+
 body {
+    margin: 0;
+    width: 100%;
+    font-family: "Nunito Sans", sans-serif;
+    --light-mode-text: hsl(200, 15%, 8%);
+    --light-mode-background: hsl(0, 0%, 98%);
+    --light-mode-input: hsl(0, 0%, 52%);
+}
+
+.top-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 40px 5%;
+    color: var(--light-mode-text);
+    align-items: center;
+    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar > h1 {
+    margin: 0;
+}
+.top-bar > .app-mode {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.app-mode > img {
+    width: 24px;
+    height: 24px;
+}
+
+.app-mode > h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.page-body {
+    box-sizing: border-box;
+    padding: 80px 5%;
+    background-color: var(--light-mode-background);
+    width: 100%;
+}
+
+.countries {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: 4vw;
+    row-gap: 4vw;
+}
+
+.country {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.country > img {
+    aspect-ratio: 19/10;
+}
+
+.country-details {
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 25px;
+    padding-bottom: 50px;
+    color: var(--light-mode-text);
+}
+
+.country-details > * {
+    margin: 5px 0;
+}
+
+.country-details > h1 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.country-details > p {
+    font-size: 14px;
+}
+
+.country-filters {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 50px 0;
+}
+
+.search-filter {
+    width: 33%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: white;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.search-filter > img {
+    width: 24px;
+    height: 24px;
+}
+
+.search-filter > input {
+    width: 100%;
+    font-size: 18px;
+    color: var(--light-mode-input);
+    border: none;
+}
+
+.search-filter > input:focus {
+    outline: none;
+}
+
+.region-filter > select {
+    background-color: white;
+    padding: 20px;
+    width: 300px;
+    padding-right: 45px; /* Extra padding to make room for the arrow */
+    border-radius: 5px;
+    box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
+    font-size: 18px;
+    border: none;
+    appearance: none; /* Removes the default arrow */
+    -webkit-appearance: none; /* Removes the default arrow in Safari */
+    -moz-appearance: none; /* Removes the default arrow in Firefox */
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="black"><path d="M207.029 381.476L12.686 187.029C3.514 177.857 3.514 162.743 12.686 153.571L29.657 136.6C38.829 127.429 53.943 127.429 63.115 136.6L224 297.485 384.885 136.6C394.057 127.429 409.171 127.429 418.343 136.6L435.314 153.571C444.486 162.743 444.486 177.857 435.314 187.029L240.971 381.476C231.799 390.648 216.685 390.648 207.029 381.476z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 20px center; /* Aligns the arrow 20px from the right */
+    background-size: 14px; /* Adjust size as needed */
 }

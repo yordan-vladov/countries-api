@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -44,8 +45,36 @@ func main() {
 		return
 	}
 	e.GET("/", func(c echo.Context) error {
-		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[:10])))
+		size := 12
+		page := 1
+
+		start := (page - 1) * size
+
+		end := start + size
+
+		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[start:end], 2)))
 	})
+
+	e.GET("/countries", func(c echo.Context) error {
+		size := 12
+		page, err := strconv.Atoi(c.QueryParam("page"))
+		if err != nil {
+			page = 1
+		}
+
+		start := (page - 1) * size
+		if start > len(countries) {
+			return c.NoContent(http.StatusNotFound)
+		}
+
+		end := start + size
+
+		if end > len(countries) {
+			end = len(countries)
+		}
+		return Render(c, http.StatusOK, LoadedCountries(countries[start:end], page+1))
+	})
+
 	e.Static("/styles", "public/styles")
 	e.Static("/images", "public/images")
 	e.Logger.Fatal(e.Start(":1323"))

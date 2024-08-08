@@ -2,6 +2,7 @@ package components
 import (
         "github.com/dustin/go-humanize"
         . "yvladov.com/countries-api/models"
+        "fmt"
         )
 templ headerComponent(){
     <head>
@@ -9,6 +10,7 @@ templ headerComponent(){
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="styles/style.css" />
         <title>Countries</title>
+        <script src="https://unpkg.com/htmx.org@2.0.1" integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/" crossorigin="anonymous"></script>
     </head>
 }
 
@@ -60,8 +62,11 @@ templ topBarComponent() {
     </div>
 }
 
-templ CountryComponent(c Country) {
-    <div class="country">
+templ CountryComponent(c Country, isLast bool, nextPage int) {
+    if isLast {
+        <div class="country" hx-get={fmt.Sprintf("countries?page=%d",nextPage)}
+        hx-trigger="revealed"
+        hx-swap="afterend">
         <img src={c.Flags.Png} alt="flag">
         <div class="country-details">
             <h1>{c.Name}</h1>
@@ -70,15 +75,33 @@ templ CountryComponent(c Country) {
             <p><b>Capital:</b> {c.Capital} </p>
         </div>
     </div>
+    }
+    else {
+        <div class="country">
+        <img src={c.Flags.Png} alt="flag">
+        <div class="country-details">
+            <h1>{c.Name}</h1>
+            <p><b>Population:</b> { humanize.Comma(int64(c.Population)) }  </p>
+            <p><b>Region:</b> {c.Region} </p>
+            <p><b>Capital:</b> {c.Capital} </p>
+        </div>
+    </div>
+    }
 }
 
-templ CountriesListComponent(c []Country) {
+templ CountriesListComponent(c []Country, nextPage int) {
     <div class="page-body">
         @countryFilterComponent()
         <div class="countries">
-            for _, country := range c {
-                @CountryComponent(country)
+            for index, country := range c {
+                @CountryComponent(country, index == len(c) - 1, nextPage)
             }
         </div>
     </div>
+}
+
+templ LoadedCountries(c []Country, nextPage int) {
+    for index, country := range c {
+        @CountryComponent(country, index == len(c) - 1, nextPage)
+    }
 }

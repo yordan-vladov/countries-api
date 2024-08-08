@@ -65,3 +65,13 @@ type RegionalBloc struct {
 	Acronym string `json:"acronym"`
 	Name    string `json:"name"`
 }
+
+func Filter(c []Country, test func(Country) bool) (fc []Country) {
+	for _, country := range c {
+		if test(country) {
+			fc = append(fc, country)
+		}
+	}
+
+	return
+}

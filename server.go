@@ -39,6 +39,7 @@ func Countries() ([]Country, error) {
 func main() {
 	e := echo.New()
 	countries, err := Countries()
+	regions := []string{"Africa", "Americas", "Asia", "Europe", "Oceania"}
 
 	if err != nil {
 		fmt.Println("Invalid countries")
@@ -52,7 +53,7 @@ func main() {
 
 		end := start + size
 
-		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[start:end], 2)))
+		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[start:end], 2, -1)))
 	})
 
 	e.GET("/countries", func(c echo.Context) error {
@@ -62,17 +63,31 @@ func main() {
 			page = 1
 		}
 
+		filter := func(c Country) bool {
+			return true
+		}
+
+		region, err := strconv.Atoi(c.QueryParam("region"))
+
+		if err == nil {
+			filter = func(c Country) bool {
+				return c.Region == regions[region]
+			}
+		}
+		filteredCountries := Filter(countries, filter)
+
 		start := (page - 1) * size
-		if start > len(countries) {
+		if start > len(filteredCountries) {
 			return c.NoContent(http.StatusNotFound)
 		}
 
 		end := start + size
 
-		if end > len(countries) {
-			end = len(countries)
+		if end > len(filteredCountries) {
+			end = len(filteredCountries)
 		}
-		return Render(c, http.StatusOK, LoadedCountries(countries[start:end], page+1))
+
+		return Render(c, http.StatusOK, LoadedCountries(Filter(countries, filter)[start:end], page+1, region))
 	})
 
 	e.Static("/styles", "public/styles")

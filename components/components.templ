@@ -22,12 +22,12 @@ templ countryFilterComponent(){
         </div>
         <div class="region-filter">
             <select>
-            <option hidden disabled selected value>Filter by Region</option>
-            <option>Africa</option>
-            <option>America</option>
-            <option>Asia</option>
-            <option>Europe</option>
-            <option>Oceania</option>
+                <option hidden disabled selected value>Filter by Region</option>
+                <option hx-get={fmt.Sprintf("countries?page=%d&region=%d",1,0)} hx-target="#countries">Africa</option>
+                <option hx-get={fmt.Sprintf("countries?page=%d&region=%d",1,1)} hx-target="#countries">America</option>
+                <option hx-get={fmt.Sprintf("countries?page=%d&region=%d",1,2)} hx-target="#countries">Asia</option>
+                <option hx-get={fmt.Sprintf("countries?page=%d&region=%d",1,3)} hx-target="#countries">Europe</option>
+                <option hx-get={fmt.Sprintf("countries?page=%d&region=%d",1,4)} hx-target="#countries">Oceania</option>
             </select>
         </div>
     </div>
@@ -62,46 +62,61 @@ templ topBarComponent() {
     </div>
 }
 
-templ CountryComponent(c Country, isLast bool, nextPage int) {
+templ CountryComponent(c Country, isLast bool, nextPage int, region int) {
     if isLast {
-        <div class="country" hx-get={fmt.Sprintf("countries?page=%d",nextPage)}
-        hx-trigger="revealed"
-        hx-swap="afterend">
-        <img src={c.Flags.Png} alt="flag">
-        <div class="country-details">
-            <h1>{c.Name}</h1>
-            <p><b>Population:</b> { humanize.Comma(int64(c.Population)) }  </p>
-            <p><b>Region:</b> {c.Region} </p>
-            <p><b>Capital:</b> {c.Capital} </p>
-        </div>
-    </div>
+        if region != -1 {
+            <div class="country" hx-get={fmt.Sprintf("countries?page=%d&region=%d",nextPage,region)}
+            hx-trigger="revealed"
+            hx-swap="afterend">
+                <img src={c.Flags.Png} alt="flag">
+                <div class="country-details">
+                    <h1>{c.Name}</h1>
+                    <p><b>Population:</b> { humanize.Comma(int64(c.Population)) }  </p>
+                    <p><b>Region:</b> {c.Region} </p>
+                    <p><b>Capital:</b> {c.Capital} </p>
+                </div>
+            </div>
+        }
+        else {
+            <div class="country" hx-get={fmt.Sprintf("countries?page=%d",nextPage)}
+            hx-trigger="revealed"
+            hx-swap="afterend">
+                <img src={c.Flags.Png} alt="flag">
+                <div class="country-details">
+                    <h1>{c.Name}</h1>
+                    <p><b>Population:</b> { humanize.Comma(int64(c.Population)) }  </p>
+                    <p><b>Region:</b> {c.Region} </p>
+                    <p><b>Capital:</b> {c.Capital} </p>
+                </div>
+            </div>
+        }
     }
     else {
         <div class="country">
-        <img src={c.Flags.Png} alt="flag">
-        <div class="country-details">
-            <h1>{c.Name}</h1>
-            <p><b>Population:</b> { humanize.Comma(int64(c.Population)) }  </p>
-            <p><b>Region:</b> {c.Region} </p>
-            <p><b>Capital:</b> {c.Capital} </p>
+            <img src={c.Flags.Png} alt="flag">
+            <div class="country-details">
+                <h1>{c.Name}</h1>
+                <p><b>Population:</b> { humanize.Comma(int64(c.Population)) }  </p>
+                <p><b>Region:</b> {c.Region} </p>
+                <p><b>Capital:</b> {c.Capital} </p>
+            </div>
         </div>
-    </div>
     }
 }
 
-templ CountriesListComponent(c []Country, nextPage int) {
+templ CountriesListComponent(c []Country, nextPage int, region int) {
     <div class="page-body">
         @countryFilterComponent()
-        <div class="countries">
+        <div id="countries" class="countries">
             for index, country := range c {
-                @CountryComponent(country, index == len(c) - 1, nextPage)
+                @CountryComponent(country, index == len(c) - 1, nextPage, region)
             }
         </div>
     </div>
 }
 
-templ LoadedCountries(c []Country, nextPage int) {
+templ LoadedCountries(c []Country, nextPage int, region int) {
     for index, country := range c {
-        @CountryComponent(country, index == len(c) - 1, nextPage)
+        @CountryComponent(country, index == len(c) - 1, nextPage, region)
     }
 }

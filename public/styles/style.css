@@ -1,13 +1,33 @@
 @import url(https://fonts.google.com/specimen/Nunito+Sans);
 
+:root {
+    --light-mode-text: hsl(200, 15%, 8%);
+    --light-mode-background: hsl(0, 0%, 98%);
+    --light-mode-input: hsl(0, 0%, 52%);
+    --light-mode-elements: hsl(0, 0%, 100%);
+
+    --dark-mode-text: hsl(0, 0%, 100%);
+    --dark-mode-background: hsl(207, 26%, 17%);
+    --dark-mode-input: hsl(0, 0%, 100%);
+    --dark-mode-elements: hsl(209, 23%, 22%);
+}
+
 body {
     margin: 0;
     width: 100%;
     min-height: 100vh;
     font-family: "Nunito Sans", sans-serif;
-    --light-mode-text: hsl(200, 15%, 8%);
-    --light-mode-background: hsl(0, 0%, 98%);
-    --light-mode-input: hsl(0, 0%, 52%);
+    --background: var(--light-mode-background);
+    --text: var(--light-mode-text);
+    --input: var(--light-mode-input);
+    --elements: var(--light-mode-elements);
+}
+
+.darkmode {
+    --background: var(--dark-mode-background);
+    --text: var(--dark-mode-text);
+    --input: var(--dark-mode-input);
+    --elements: var(--dark-mode-elements);
 }
 
 .content {
@@ -18,7 +38,8 @@ body {
     flex-direction: row;
     justify-content: space-between;
     padding: 40px 5%;
-    color: var(--light-mode-text);
+    background-color: var(--elements);
+    color: var(--text);
     align-items: center;
     box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.1);
     height: 120px;
@@ -47,7 +68,7 @@ body {
 .page-body {
     box-sizing: border-box;
     padding: 80px 5%;
-    background-color: var(--light-mode-background);
+    background-color: var(--background);
     width: 100%;
     min-height: 100%;
 }
@@ -63,7 +84,7 @@ body {
 .country {
     display: flex;
     flex-direction: column;
-    background-color: white;
+    background-color: var(--elements);
     border-radius: 5px;
     overflow: hidden;
     box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
@@ -80,7 +101,7 @@ body {
     box-sizing: border-box;
     padding: 25px;
     padding-bottom: 50px;
-    color: var(--light-mode-text);
+    color: var(--text);
 }
 
 .country .country-details > * {
@@ -109,7 +130,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: white;
+    background-color: var(--elements);
     gap: 20px;
     padding: 20px;
     border-radius: 5px;
@@ -122,9 +143,10 @@ body {
 }
 
 .search-filter > input {
+    background-color: var(--elements);
     width: 100%;
     font-size: 18px;
-    color: var(--light-mode-input);
+    color: var(--input);
     border: none;
 }
 
@@ -133,7 +155,7 @@ body {
 }
 
 .region-filter > select {
-    background-color: white;
+    background-color: var(--elements);
     padding: 20px;
     width: 300px;
     padding-right: 45px; /* Extra padding to make room for the arrow */
@@ -141,6 +163,7 @@ body {
     box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
     font-size: 18px;
     border: none;
+    color: var(--input);
     appearance: none; /* Removes the default arrow */
     -webkit-appearance: none; /* Removes the default arrow in Safari */
     -moz-appearance: none; /* Removes the default arrow in Firefox */
@@ -150,10 +173,14 @@ body {
     background-size: 14px; /* Adjust size as needed */
 }
 
+.darkmode .region-filter > select {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="white"><path d="M207.029 381.476L12.686 187.029C3.514 177.857 3.514 162.743 12.686 153.571L29.657 136.6C38.829 127.429 53.943 127.429 63.115 136.6L224 297.485 384.885 136.6C394.057 127.429 409.171 127.429 418.343 136.6L435.314 153.571C444.486 162.743 444.486 177.857 435.314 187.029L240.971 381.476C231.799 390.648 216.685 390.648 207.029 381.476z"/></svg>');
+}
+
 .country-page {
     box-sizing: border-box;
     padding: 80px 5%;
-    background-color: var(--light-mode-background);
+    background-color: var(--background);
     width: 100%;
     min-height: 100%;
     display: flex;
@@ -168,7 +195,7 @@ body {
     gap: 20px;
     justify-content: center;
     text-decoration: none;
-    background-color: white;
+    background-color: var(--elements);
     padding: 15px 20px;
     box-sizing: border-box;
     width: 150px;
@@ -176,7 +203,7 @@ body {
     box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
     font-size: 18px;
     border: none;
-    color: var(--light-mode-input);
+    color: var(--input);
 }
 
 .country-page > .country-details {
@@ -192,6 +219,7 @@ body {
     height: auto;
 }
 .country-page .country-description {
+    color: var(--text);
     width: 50%;
 }
 .country-page .main-details {
@@ -220,13 +248,13 @@ body {
     gap: 20px;
     justify-content: center;
     text-decoration: none;
-    background-color: white;
+    background-color: var(--elements);
     padding: 15px 20px;
     box-sizing: border-box;
     border-radius: 5px;
     box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.1);
     font-size: 18px;
     border: none;
-    color: var(--light-mode-input);
+    color: var(--input);
     white-space: nowrap;
 }

@@ -57,6 +57,7 @@ templ contentComponent(body templ.Component){
             @topBarComponent()
             @body
         </div>
+        <script src="/scripts/dark-mode.js"></script>
     </body>
 }
 
@@ -75,7 +76,7 @@ templ topBarComponent() {
     <div class="top-bar">
         <h1>Where in the world?</h1>
         <div class="app-mode">
-            <img src="/images/icon-moon.svg" alt="moon">
+            <img id="dark-mode-toggle" src="/images/icon-moon.svg" alt="moon">
             <h1>Dark Mode</h1>
         </div>
     </div>
@@ -90,14 +91,14 @@ templ CountryPage(c Country, b []Border) {
             <div class="country-description">
                 <h1>{c.Name}</h1>
                 <div class="main-details">
-                    <p><b>Native Name:</b>{c.NativeName}</p>
-                    <p><b>Population:</b>{ humanize.Comma(int64(c.Population)) }</p>
-                    <p><b>Region:</b>{c.Region}</p>
-                    <p><b>Sub Region:</b>{c.Subregion}</p>
-                    <p><b>Capital:</b>{c.Capital}</p>
-                    <p><b>Top Level Domain:</b>{c.TopLevelDomain[0]}</p>
-                    <p><b>Currencies:</b>{countryCurrencies(c)}</p>
-                    <p><b>Languages:</b>{countryLanguages(c)}</p>
+                    <p><b>Native Name: </b>{c.NativeName}</p>
+                    <p><b>Population: </b>{ humanize.Comma(int64(c.Population)) }</p>
+                    <p><b>Region: </b>{c.Region}</p>
+                    <p><b>Sub Region: </b>{c.Subregion}</p>
+                    <p><b>Capital: </b>{c.Capital}</p>
+                    <p><b>Top Level Domain: </b>{c.TopLevelDomain[0]}</p>
+                    <p><b>Currencies: </b>{countryCurrencies(c)}</p>
+                    <p><b>Languages: </b>{countryLanguages(c)}</p>
                 </div>
                @BordersComponent(c,b)
             </div>

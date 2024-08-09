@@ -143,6 +143,7 @@ func main() {
 
 	e.Static("/styles", "public/styles")
 	e.Static("/images", "public/images")
+	e.Static("/scripts", "public/scripts")
 	e.Logger.Fatal(e.Start(":1323"))
 }
 

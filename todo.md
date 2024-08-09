@@ -1,7 +1,7 @@
 # TODO
 
 1. ~~Implement a template using templ~~
-2. Display countries
+2. ~~Display countries~~
     1. ~~Parse Countries into a struct~~
     2. ~~Create a component for a country~~
     3. ~~Create a component for the country list~~
@@ -11,5 +11,5 @@
 5. ~~Add filter by search name~~
 6. Add lazy loading for images
 7. ~~Add country page~~
-8. Add Dark Mode
+8. ~~Add Dark Mode~~
 9. Add Responsive Design

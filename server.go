@@ -11,6 +11,7 @@ import (
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	. "yvladov.com/countries-api/components"
 	. "yvladov.com/countries-api/models"
 )
@@ -38,6 +39,7 @@ func Countries() ([]Country, error) {
 
 func main() {
 	e := echo.New()
+	e.Use(middleware.Logger())
 	countries, err := Countries()
 	regions := []string{"Africa", "Americas", "Asia", "Europe", "Oceania"}
 
@@ -56,9 +58,9 @@ func main() {
 		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[start:end], 2, -1)))
 	})
 
-	e.GET("/countries", func(c echo.Context) error {
+	e.POST("/countries", func(c echo.Context) error {
 		size := 12
-		page, err := strconv.Atoi(c.QueryParam("page"))
+		page, err := strconv.Atoi(c.FormValue("page"))
 		if err != nil {
 			page = 1
 		}
@@ -67,9 +69,12 @@ func main() {
 			return true
 		}
 
-		region, err := strconv.Atoi(c.QueryParam("region"))
+		region, err := strconv.Atoi(c.FormValue("region"))
 
-		if err == nil {
+		if err != nil {
+			region = -1
+		}
+		if region != -1 {
 			filter = func(c Country) bool {
 				return c.Region == regions[region]
 			}

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -37,10 +38,22 @@ func Countries() ([]Country, error) {
 	return countries, nil
 }
 
+func CountryCodes(c []Country) map[string]*Country {
+	m := make(map[string]*Country)
+
+	for _, country := range c {
+		m[country.Alpha3Code] = &country
+	}
+
+	return m
+}
+
 func main() {
 	e := echo.New()
 	e.Use(middleware.Logger())
 	countries, err := Countries()
+	countryCodes := CountryCodes(countries)
+
 	regions := []string{"Africa", "Americas", "Asia", "Europe", "Oceania"}
 
 	if err != nil {
@@ -55,17 +68,19 @@ func main() {
 
 		end := start + size
 
-		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[start:end], 2, -1)))
+		return Render(c, http.StatusOK, ContentPage(CountriesListComponent(countries[start:end], 2, -1, "")))
 	})
 
 	e.POST("/countries", func(c echo.Context) error {
 		size := 12
+		// get page
 		page, err := strconv.Atoi(c.FormValue("page"))
 		if err != nil {
 			page = 1
 		}
 
-		filter := func(c Country) bool {
+		// get region and set region filter
+		regionFilter := func(c Country) bool {
 			return true
 		}
 
@@ -75,11 +90,23 @@ func main() {
 			region = -1
 		}
 		if region != -1 {
-			filter = func(c Country) bool {
+			regionFilter = func(c Country) bool {
 				return c.Region == regions[region]
 			}
 		}
-		filteredCountries := Filter(countries, filter)
+
+		searchFilter := func(c Country) bool {
+			return true
+		}
+		search := c.FormValue("search")
+
+		if search != "" {
+			searchFilter = func(c Country) bool {
+				return strings.Contains(strings.ToLower(c.Name), strings.ToLower(search))
+			}
+		}
+		// get filtered countries
+		filteredCountries := Filter(countries, regionFilter, searchFilter)
 
 		start := (page - 1) * size
 		if start > len(filteredCountries) {
@@ -92,7 +119,26 @@ func main() {
 			end = len(filteredCountries)
 		}
 
-		return Render(c, http.StatusOK, LoadedCountries(Filter(countries, filter)[start:end], page+1, region))
+		return Render(c, http.StatusOK, LoadedCountries(filteredCountries[start:end], page+1, region, search))
+	})
+
+	e.GET("/country/:code", func(c echo.Context) error {
+
+		var country *Country
+
+		code := c.Param("code")
+
+		country, ok := countryCodes[code]
+
+		if !ok {
+			country = &countries[0]
+		}
+		var borders []Border
+
+		for _, borderCode := range country.Borders {
+			borders = append(borders, Border{Code: borderCode, Name: countryCodes[borderCode].Name})
+		}
+		return Render(c, http.StatusOK, ContentPage(CountryPage(*country, borders)))
 	})
 
 	e.Static("/styles", "public/styles")

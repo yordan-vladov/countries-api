@@ -66,12 +66,17 @@ type RegionalBloc struct {
 	Name    string `json:"name"`
 }
 
-func Filter(c []Country, test func(Country) bool) (fc []Country) {
+func Filter(c []Country, regionTest, searchTest func(Country) bool) (fc []Country) {
 	for _, country := range c {
-		if test(country) {
+		if regionTest(country) && searchTest(country) {
 			fc = append(fc, country)
 		}
 	}
 
 	return
+}
+
+type Border struct {
+	Code string
+	Name string
 }

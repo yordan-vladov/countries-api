@@ -3,34 +3,53 @@ import (
         "github.com/dustin/go-humanize"
         . "yvladov.com/countries-api/models"
         "fmt"
+        "strings"
         )
+
+
+func countryLanguages(c Country) string {
+    var langs []string
+    for _, lang := range c.Languages {
+        langs = append(langs, lang.Name)
+    }
+    return strings.Join(langs, ", ")
+}
+
+func countryCurrencies(c Country) string {
+    var currs []string
+    for _, curr := range c.Currencies {
+        currs = append(currs, curr.Name)
+    }
+    return strings.Join(currs, ", ")
+}
 templ headerComponent(){
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="styles/style.css" />
+        <link rel="stylesheet" href="/styles/style.css" />
         <title>Countries</title>
         <script src="https://unpkg.com/htmx.org@2.0.1" integrity="sha384-QWGpdj554B4ETpJJC9z+ZHJcA/i59TyjxEPXiiUgN2WmTyV5OEZWCD6gQhgkdpB/" crossorigin="anonymous"></script>
     </head>
 }
 
 templ countryFilterComponent(){
-    <div class="country-filters">
+    <form class="country-filters" hx-post="countries"  hx-target="#countries" hx-trigger="change, keyup delay:500ms">
         <div class="search-filter">
             <img src="/images/magnifying-glass.svg" alt="search-icon">
-            <input type="text" placeholder="Search for a country" />
+            <input type="text" placeholder="Search for a country" name="search"/>
         </div>
         <div class="region-filter">
-            <select>
+            <select name="region">
                 <option hidden disabled selected value>Filter by Region</option>
-                <option hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"region\":%d}", 1,0)} hx-target="#countries">Africa</option>
-                <option hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"region\":%d}", 1,1)} hx-target="#countries">America</option>
-                <option hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"region\":%d}", 1,2)} hx-target="#countries">Asia</option>
-                <option hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"region\":%d}", 1,3)} hx-target="#countries">Europe</option>
-                <option hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"region\":%d}", 1,4)} hx-target="#countries">Oceania</option>
+                <option hx-post="countries" value="0">Africa</option>
+                <option hx-post="countries" value="1">America</option>
+                <option hx-post="countries" value="2">Asia</option>
+                <option hx-post="countries" value="3">Europe</option>
+                <option hx-post="countries" value="4">Oceania</option>
             </select>
         </div>
-    </div>
+        <input name="page" type="hidden" value="1">
+    </form>
 }
 templ contentComponent(body templ.Component){
     <body>
@@ -56,16 +75,53 @@ templ topBarComponent() {
     <div class="top-bar">
         <h1>Where in the world?</h1>
         <div class="app-mode">
-            <img src="images/icon-moon.svg" alt="moon">
+            <img src="/images/icon-moon.svg" alt="moon">
             <h1>Dark Mode</h1>
         </div>
     </div>
 }
 
-templ CountryComponent(c Country, isLast bool, nextPage int, region int) {
+templ CountryPage(c Country, b []Border) {
+    <div class="country-page" >
+        <a href="javascript:history.back()"> <img src="/images/icon-left-arrow.svg" alt="left arrow"> Back </a>
+
+        <div class="country-details">
+            <img src={c.Flags.Svg} alt="flag">
+            <div class="country-description">
+                <h1>{c.Name}</h1>
+                <div class="main-details">
+                    <p><b>Native Name:</b>{c.NativeName}</p>
+                    <p><b>Population:</b>{ humanize.Comma(int64(c.Population)) }</p>
+                    <p><b>Region:</b>{c.Region}</p>
+                    <p><b>Sub Region:</b>{c.Subregion}</p>
+                    <p><b>Capital:</b>{c.Capital}</p>
+                    <p><b>Top Level Domain:</b>{c.TopLevelDomain[0]}</p>
+                    <p><b>Currencies:</b>{countryCurrencies(c)}</p>
+                    <p><b>Languages:</b>{countryLanguages(c)}</p>
+                </div>
+               @BordersComponent(c,b)
+            </div>
+
+
+        </div>
+    </div>
+}
+
+templ BordersComponent(c Country, b []Border) {
+    if len(b) > 0 {
+        <div class="borders">
+            <b>Border Countries:</b>
+            for _, border := range b {
+                <a href={templ.URL(fmt.Sprintf("/country/%s", border.Code))}>{border.Name}</a>
+            }
+        </div>
+    }
+}
+
+templ CountryComponent(c Country, isLast bool, nextPage int, region int, search string) {
     if isLast {
         if region != -1 {
-            <div class="country" hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"region\":%d}",nextPage,region)}
+            <a href={templ.URL(fmt.Sprintf("/country/%s", c.Alpha3Code))} class="country" hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"region\":%d,\"search\":\"%s\"}",nextPage,region,search)}
             hx-trigger="revealed"
             hx-swap="afterend">
                 <img src={c.Flags.Png} alt="flag">
@@ -75,10 +131,10 @@ templ CountryComponent(c Country, isLast bool, nextPage int, region int) {
                     <p><b>Region:</b> {c.Region} </p>
                     <p><b>Capital:</b> {c.Capital} </p>
                 </div>
-            </div>
+            </a>
         }
         else {
-        <div class="country" hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d}",nextPage)}
+         <a href={templ.URL(fmt.Sprintf("/country/%s", c.Alpha3Code))} class="country" hx-post="countries" hx-vals={fmt.Sprintf("{\"page\":%d,\"search\":\"%s\"}",nextPage,search)}
             hx-trigger="revealed"
             hx-swap="afterend">
                 <img src={c.Flags.Png} alt="flag">
@@ -88,11 +144,11 @@ templ CountryComponent(c Country, isLast bool, nextPage int, region int) {
                     <p><b>Region:</b> {c.Region} </p>
                     <p><b>Capital:</b> {c.Capital} </p>
                 </div>
-            </div>
+            </a>
         }
     }
     else {
-        <div class="country">
+        <a href={templ.URL(fmt.Sprintf("/country/%s", c.Alpha3Code))} class="country">
             <img src={c.Flags.Png} alt="flag">
             <div class="country-details">
                 <h1>{c.Name}</h1>
@@ -100,23 +156,23 @@ templ CountryComponent(c Country, isLast bool, nextPage int, region int) {
                 <p><b>Region:</b> {c.Region} </p>
                 <p><b>Capital:</b> {c.Capital} </p>
             </div>
-        </div>
+        </a>
     }
 }
 
-templ CountriesListComponent(c []Country, nextPage int, region int) {
+templ CountriesListComponent(c []Country, nextPage int, region int, search string) {
     <div class="page-body">
         @countryFilterComponent()
         <div id="countries" class="countries">
             for index, country := range c {
-                @CountryComponent(country, index == len(c) - 1, nextPage, region)
+                @CountryComponent(country, index == len(c) - 1, nextPage, region, search)
             }
         </div>
     </div>
 }
 
-templ LoadedCountries(c []Country, nextPage int, region int) {
+templ LoadedCountries(c []Country, nextPage int, region int, search string) {
     for index, country := range c {
-        @CountryComponent(country, index == len(c) - 1, nextPage, region)
+        @CountryComponent(country, index == len(c) - 1, nextPage, region, search)
     }
 }

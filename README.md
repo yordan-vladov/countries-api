@@ -46,6 +46,6 @@ I decided to build the component using Go and HTMX. The goal was to make the com
 - CSS Grid
 - JavaScript
 - [Go](https://echo.labstack.com/)
-- [Echo](https://nextjs.org/) - Go web framework
+- [Echo](https://echo.labstack.com/) - Go web framework
 - [HTMX](https://htmx.org/)
 - [Templ](https://templ.guide/) - Ge templating library

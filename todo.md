@@ -12,4 +12,4 @@
 6. Add lazy loading for images
 7. ~~Add country page~~
 8. ~~Add Dark Mode~~
-9. Add Responsive Design
+9. ~~Add Responsive Design~~

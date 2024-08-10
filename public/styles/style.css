@@ -258,3 +258,43 @@ body {
     color: var(--input);
     white-space: nowrap;
 }
+
+@media only screen and (max-width: 800px) {
+    .countries {
+        grid-template-columns: 1fr;
+    }
+
+    .country-filters {
+        flex-direction: column;
+        justify-content: start;
+        align-items: start;
+        margin: 50px 0;
+        width: 100%;
+        gap: 30px;
+    }
+
+    .search-filter {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .country-page > .country-details {
+        flex-direction: column;
+        align-items: start;
+        justify-content: center;
+        gap: 50px;
+    }
+
+    .country-page > .country-details > img {
+        width: 100%;
+    }
+
+    .country-page .country-description {
+        color: var(--text);
+        width: 100%;
+    }
+
+    .country-page .main-details {
+        grid-template-columns: 1fr;
+    }
+}

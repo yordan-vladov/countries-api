@@ -14,4 +14,4 @@
 8. ~~Add Dark Mode~~
 9. ~~Add Responsive Design~~
 10. ~~Dockerize the app~~
-11. Make it into a Kubernetes cluster
+11. ~~Make it into a Kubernetes cluster~~
